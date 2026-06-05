@@ -1,9 +1,70 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Mon site</title>
-  </head>
-  <body>
-    <h1>Bienvenue sur mon site !</h1>
-  </body>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galerie photo de Timéo</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+        }
+
+        header {
+            background: #4a6cf7;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .gallery img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Galerie photo de Timéo</h1>
+        <p>Mes plus belles photos</p>
+    </header>
+
+    <section class="gallery">
+        <img src="photos/photo1.jpg" alt="Photo 1">
+        <img src="photos/photo2.jpg" alt="Photo 2">
+        <img src="photos/photo3.jpg" alt="Photo 3">
+        <img src="photos/photo4.jpg" alt="Photo 4">
+        <img src="photos/photo5.jpg" alt="Photo 5">
+    </section>
+
+    <footer>
+        <p>© 2026 — Site créé par Timéo</p>
+    </footer>
+
+</body>
 </html>
