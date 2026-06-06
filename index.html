@@ -3,542 +3,706 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Timéo Bonnin · Photographie Nature & Futurisme</title>
-    <!-- Google Fonts & Font Awesome pour les icônes -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Hello Ornitho 2.0 | Oiseaux, vent et futur</title>
     <style>
+        /* ---------- RESET & BASE ---------- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* éviter les sélections intempestives sur les animations */
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at 20% 10%, #0a111f, #02060c);
-            min-height: 100vh;
+            font-family: 'Segoe UI', 'Poppins', 'Orbitron', system-ui, -apple-system, monospace;
+            background: radial-gradient(circle at 10% 20%, #0a0f2a, #01010e);
             color: #eef5ff;
             overflow-x: hidden;
-            position: relative;
+            scroll-behavior: smooth;
+            transition: background 0.3s, color 0.2s;
         }
 
-        /* CANVAS PRINCIPAL : OISEAUX VOLANTS + MARCHEURS + FEUILLES */
-        #natureCanvas {
+        /* MODE SOMBRE / CLAIR (toggle) */
+        body.light-mode {
+            background: radial-gradient(circle at 10% 20%, #d4eaff, #b8d0e6);
+            color: #022031;
+        }
+        body.light-mode .glass-card, 
+        body.light-mode header,
+        body.light-mode nav,
+        body.light-mode .species-card,
+        body.light-mode .gallery-item,
+        body.light-mode .blog-card,
+        body.light-mode .contact-form {
+            background: rgba(255, 255, 245, 0.85);
+            backdrop-filter: blur(8px);
+            color: #022031;
+            border-color: #4b9eff;
+        }
+        body.light-mode .btn, body.light-mode button {
+            background: #2c7ab1;
+            color: white;
+        }
+
+        /* particules lumineuses canvas */
+        #particlesCanvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: block;
-            z-index: 1;
-            pointer-events: none;  /* Permet de cliquer sur les liens */
+            pointer-events: none;
+            z-index: 0;
         }
 
-        /* Contenu principal avec dégradé futuriste et transparence */
-        .hero {
+        /* animations oiseaux + feuilles */
+        .bird-fly {
+            position: fixed;
+            font-size: 1.9rem;
+            filter: drop-shadow(0 0 6px cyan);
+            pointer-events: none;
+            z-index: 12;
+            opacity: 0.8;
+            animation: flyHorizontal linear infinite;
+        }
+        @keyframes flyHorizontal {
+            0% { transform: translateX(-20vw) translateY(0px) scaleX(1); }
+            49% { transform: translateX(55vw) translateY(-25px) scaleX(1); }
+            50% { transform: translateX(55.1vw) translateY(-25px) scaleX(-1); }
+            100% { transform: translateX(115vw) translateY(10px) scaleX(-1); }
+        }
+        .bird1 { top: 12%; animation-duration: 18s; font-size: 2.2rem; }
+        .bird2 { top: 28%; animation-duration: 24s; font-size: 1.6rem; animation-delay: 2s; }
+        .bird3 { top: 45%; animation-duration: 22s; font-size: 1.9rem; animation-delay: 5s; }
+        .bird4 { top: 70%; animation-duration: 30s; font-size: 1.4rem; animation-delay: 1s; }
+        .bird5 { top: 85%; animation-duration: 26s; font-size: 1.7rem; animation-delay: 8s; }
+
+        .leaf-sway {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 11;
+            filter: drop-shadow(0 0 4px lightgreen);
+            animation: swayLeaf 6s infinite ease-in-out;
+            transform-origin: bottom center;
+            opacity: 0.7;
+        }
+        @keyframes swayLeaf {
+            0% { transform: rotate(0deg) translateY(0px); }
+            50% { transform: rotate(8deg) translateY(-8px); }
+            100% { transform: rotate(-4deg) translateY(0px); }
+        }
+        .leaf1 { bottom: 5%; left: 5%; animation-duration: 7s; }
+        .leaf2 { bottom: 15%; left: 85%; animation-duration: 9s; animation-delay: 1s; }
+        .leaf3 { bottom: 25%; left: 20%; font-size: 1.4rem; animation-duration: 8s; }
+        .leaf4 { bottom: 10%; left: 70%; font-size: 1.8rem; animation-duration: 10s; }
+
+        /* STRUCTURE PRINCIPALE */
+        .container {
             position: relative;
-            z-index: 10;
-            min-height: 100vh;
+            z-index: 5;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* HEADER STICKY + TRANSPARENCE */
+        header {
+            background: rgba(5, 15, 30, 0.7);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid cyan;
+            transition: all 0.2s;
+        }
+        .logo h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(95deg, #0ff, #a0f, #0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+        .subtitle {
+            font-style: italic;
+            color: #b3f0ff;
+        }
+
+        /* NAV STICKY */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 20, 35, 0.85);
+            backdrop-filter: blur(16px);
             display: flex;
-            flex-direction: column;
             justify-content: center;
-            align-items: center;
-            padding: 2rem 1.5rem;
-            backdrop-filter: blur(2px);
+            gap: 2rem;
+            padding: 0.8rem;
+            z-index: 30;
+            border-bottom: 1px solid #0ff55a;
+            transition: 0.2s;
         }
-
-        .glass-panel {
-            max-width: 1300px;
-            width: 100%;
-            background: linear-gradient(135deg, rgba(10, 25, 40, 0.6), rgba(2, 10, 18, 0.75));
-            backdrop-filter: blur(14px);
-            border-radius: 3rem;
-            padding: 2rem 2.2rem;
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(80, 200, 240, 0.25), 0 0 35px rgba(0, 200, 230, 0.2);
-            border: 1px solid rgba(80, 210, 250, 0.3);
-            transition: transform 0.25s ease, box-shadow 0.4s ease;
+        nav a {
+            color: #d6f0ff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            transition: 0.2s;
         }
-
-        h1 {
-            font-family: 'Syne', sans-serif;
-            font-size: 4rem;
-            font-weight: 700;
-            background: linear-gradient(125deg, #FFF6E5, #a8e0ff, #4affdd);
+        nav a:hover {
+            background: #0ff33c;
+            color: #01001a;
+            box-shadow: 0 0 12px cyan;
+        }
+        /* SECTION */
+        section {
+            background: rgba(10, 20, 40, 0.55);
+            backdrop-filter: blur(8px);
+            border-radius: 48px;
+            margin: 3rem 0;
+            padding: 2rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            transition: all 0.4s;
+        }
+        h2 {
+            font-size: 2.3rem;
+            border-left: 6px solid #0ff;
+            padding-left: 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+        /* hero */
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+        .hero h1 {
+            font-size: 3.8rem;
+            background: linear-gradient(135deg, #b3ffff, #aa6eff);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 0 15px rgba(0,220,200,0.3);
         }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(0, 30, 40, 0.7);
-            backdrop-filter: blur(8px);
-            padding: 0.5rem 1.5rem;
-            border-radius: 60px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            border-left: 2px solid #4affdd;
-            border-right: 2px solid #4affdd;
-            margin: 0.75rem 0;
-            color: #d9f2ff;
-        }
-
-        .bio {
-            font-size: 1.1rem;
-            max-width: 800px;
-            margin: 1rem auto;
-            line-height: 1.5;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
-        }
-
-        /* SECTION LIENS PRINCIPAUX (haut de page) */
-        .nav-links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin: 1.8rem 0 1.2rem;
-            padding: 0.8rem 0;
-            border-top: 1px solid rgba(74, 255, 210, 0.2);
-            border-bottom: 1px solid rgba(74, 255, 210, 0.2);
-        }
-
-        .nav-btn {
-            background: rgba(0, 20, 30, 0.7);
-            backdrop-filter: blur(8px);
-            padding: 0.6rem 1.4rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #e0f2fe;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(74, 210, 255, 0.4);
-        }
-
-        .nav-btn i {
-            font-size: 1rem;
-        }
-
-        .nav-btn:hover {
-            background: rgba(0, 100, 120, 0.8);
-            border-color: #4affdd;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,200,210,0.2);
+        .btn {
+            display: inline-block;
+            background: #0c8599;
             color: white;
-        }
-
-        /* PASSIONS / PILLS */
-        .passions {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.8rem;
-            margin: 1.2rem 0;
-        }
-        .pill {
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(12px);
-            padding: 0.4rem 1.2rem;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            border: 1px solid rgba(74, 255, 200, 0.5);
-        }
-
-        /* GALLERIE PREVIEW */
-        .gallery-mini {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1.2rem;
-            margin: 2rem 0 1rem;
-        }
-        .card-mini {
-            width: 130px;
-            height: 130px;
-            background: linear-gradient(145deg, #1f3e4a, #0a1c26);
-            border-radius: 28px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 2rem;
-            border: 1px solid rgba(80, 210, 240, 0.5);
-            transition: all 0.2s;
-            cursor: default;
-        }
-        .card-mini span {
-            background: rgba(0,0,0,0.5);
-            padding: 4px 10px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-
-        /* BOUTON EXPLORER */
-        .explore-btn {
-            background: linear-gradient(95deg, #0a2a32, #04161f);
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: bold;
+            margin-top: 1.2rem;
             border: none;
-            padding: 0.7rem 2rem;
-            font-weight: 600;
-            border-radius: 3rem;
-            color: #cefff0;
-            border: 1px solid #2effcf;
-            margin-top: 0.8rem;
             cursor: pointer;
             transition: 0.2s;
-            font-size: 0.9rem;
+            text-decoration: none;
         }
-        .explore-btn:hover {
-            background: #135f6b;
-            box-shadow: 0 0 20px #2effcf;
+        .btn:hover {
+            background: #0ff5b0;
+            color: #011;
             transform: scale(1.02);
+            box-shadow: 0 0 15px cyan;
         }
-
-        footer {
-            font-size: 0.7rem;
-            margin-top: 2rem;
+        /* grille espèces */
+        .species-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 2rem;
+        }
+        .species-card {
+            background: rgba(20, 30, 55, 0.7);
+            border-radius: 32px;
+            padding: 1.3rem;
             text-align: center;
-            opacity: 0.65;
-            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            border: 1px solid rgba(0, 200, 200, 0.4);
         }
-
+        .species-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 0 20px #0ffc;
+            border-color: cyan;
+        }
+        .card-img {
+            width: 100%;
+            height: 170px;
+            background: #2e4e6e;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 3rem;
+            color: white;
+        }
+        .card-img:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+        /* galerie */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        .gallery-item {
+            background: #1c334b;
+            border-radius: 32px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 3rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px turquoise;
+        }
+        /* blog */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2rem;
+        }
+        .blog-card {
+            background: #11212ecc;
+            border-radius: 32px;
+            padding: 1rem;
+            transition: 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeSlideUp 0.6s forwards;
+        }
+        @keyframes fadeSlideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .blog-card img {
+            width: 100%;
+            height: 140px;
+            background: #2b5f6e;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            object-fit: cover;
+        }
+        /* formulaire */
+        .contact-form {
+            background: #0f202ccc;
+            padding: 2rem;
+            border-radius: 48px;
+            max-width: 700px;
+            margin: auto;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 60px;
+            border: none;
+            background: #eef4fc;
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid cyan;
+            margin-top: 2rem;
+        }
+        /* mode sombre toggle */
+        .darkmode-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #0ff;
+            color: #000;
+            border: none;
+            border-radius: 60px;
+            padding: 8px 16px;
+            z-index: 99;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        /* compteur oiseaux vus */
+        .bird-counter {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0a1a2acc;
+            backdrop-filter: blur(8px);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            z-index: 99;
+            border: 1px solid cyan;
+        }
         @media (max-width: 780px) {
-            h1 { font-size: 2.5rem; }
-            .glass-panel { padding: 1.5rem; }
-            .nav-btn { padding: 0.4rem 1rem; font-size: 0.75rem; }
-            .card-mini { width: 100px; height: 100px; font-size: 1.5rem; }
+            .species-grid, .gallery-grid, .blog-grid { gap: 1rem; }
+            h2 { font-size: 1.6rem; }
+            .hero h1 { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
 
-<canvas id="natureCanvas"></canvas>
+<canvas id="particlesCanvas"></canvas>
 
-<div class="hero">
-    <div class="glass-panel">
-        <h1>Timéo Bonnin</h1>
-        <div class="badge"><i class="fas fa-feather-alt"></i> Naturaliste amateur · né en 2012 · passion Oiseaux depuis 2024</div>
-        <div class="bio">
-            🌿 Photographe Faune & Flore · Ornithologie terrain · Observation immersive <br>
-            Entre dégradés futuristes et vol des oiseaux, je capture l’âme sauvage.
-        </div>
+<!-- OISEAUX ANIMÉS (5 vitesses différentes) -->
+<div class="bird-fly bird1">🐦✨</div>
+<div class="bird-fly bird2">🕊️⚡</div>
+<div class="bird-fly bird3">🦜🌀</div>
+<div class="bird-fly bird4">🐧💨</div>
+<div class="bird-fly bird5">🐦‍⬛🌬️</div>
 
-        <!-- LIENS PLACÉS EN HAUT (respect total des urls fournies) -->
-        <div class="nav-links">
-            <a href="https://timeo-photographie-4.webnode.fr/" class="nav-btn" target="_blank" rel="noopener"><i class="fas fa-home"></i> Accueil</a>
-            <a href="https://timeo-photographie-4.webnode.fr/galerie-photo/" class="nav-btn" target="_blank" rel="noopener"><i class="fas fa-camera-retro"></i> Galerie photo</a>
-            <a href="https://timeo-photographie-4.webnode.fr/mes-listes-ornitho/" class="nav-btn" target="_blank" rel="noopener"><i class="fas fa-list-ul"></i> Mes listes ornitho</a>
-            <a href="https://timeo-photographie-4.webnode.fr/station-decoute-ephemere/" class="nav-btn" target="_blank" rel="noopener"><i class="fas fa-head-side-vr"></i> Station d'écoute</a>
-        </div>
+<!-- FEUILLES AU VENT -->
+<div class="leaf-sway leaf1">🍃</div>
+<div class="leaf-sway leaf2">🌿</div>
+<div class="leaf-sway leaf3">🍂</div>
+<div class="leaf-sway leaf4">🌾</div>
 
-        <div class="passions">
-            <div class="pill"><i class="fas fa-dove"></i> Ornithologie</div>
-            <div class="pill"><i class="fas fa-camera"></i> Photo animalière</div>
-            <div class="pill"><i class="fas fa-leaf"></i> Biodiversité</div>
-            <div class="pill"><i class="fas fa-rocket"></i> Vision futuriste</div>
-        </div>
-
-        <div class="gallery-mini">
-            <div class="card-mini"><i class="fas fa-crow"></i><span>Corvidés</span></div>
-            <div class="card-mini"><i class="fas fa-kiwi-bird"></i><span>Passereaux</span></div>
-            <div class="card-mini"><i class="fas fa-dragon"></i><span>Rapaces</span></div>
-            <div class="card-mini"><i class="fas fa-tree"></i><span>Forêts</span></div>
-        </div>
-
-        <button class="explore-btn" id="dynamicBtn"><i class="fas fa-feather-alt"></i> Explorer l'essaim mouvant</button>
-        <footer>✦ Feuilles latérales · Oiseaux en vol + picorage au sol · Liens Webnode actifs ✦</footer>
+<header>
+    <div class="logo">
+        <h1>Hello Ornitho 2.0</h1>
+        <div class="subtitle">Oiseaux, vent et futur ✨</div>
     </div>
+</header>
+
+<nav>
+    <a href="#accueil">Accueil</a>
+    <a href="#especes">Espèces</a>
+    <a href="#galerie">Galerie</a>
+    <a href="#blog">Blog</a>
+    <a href="#contact">Contact</a>
+</nav>
+
+<div class="container">
+    <!-- SECTION ACCUEIL HERO -->
+    <section id="accueil" class="hero">
+        <h1>Bienvenue dans l'ère aviaire 2.0</h1>
+        <p>Entre IA, biomimétisme et vents numériques, explorez l'avenir des oiseaux et de la nature augmentée. Chaque image est un portail vers l'ancien sanctuaire ornithologique.</p>
+        <button class="btn" id="discoverBtn">Découvrir les espèces 🕊️</button>
+    </section>
+
+    <!-- SECTION ESPÈCES : 6 cartes -->
+    <section id="especes">
+        <h2>✨ Espèces futuristiques ✨</h2>
+        <div class="species-grid" id="speciesGrid">
+            <!-- chaque carte : image cliquable redirige vers ancien site -->
+            <div class="species-card">
+                <div class="card-img" data-url="https://mon-ancien-site.example">🦜 Aigle Solaire</div>
+                <h3>Aquila solaris</h3>
+                <p>Plumes photovoltaïques, plane sur les courants thermiques.</p>
+                <button class="btn species-btn" data-url="https://mon-ancien-site.example">En savoir plus</button>
+            </div>
+            <div class="species-card">
+                <div class="card-img" data-url="https://mon-ancien-site.example">🐦 Cyber-Mésange</div>
+                <h3>Parus cybernetica</h3>
+                <p>Chant numérique, capteurs bio-intégrés.</p>
+                <button class="btn species-btn" data-url="https://mon-ancien-site.example">En savoir plus</button>
+            </div>
+            <div class="species-card">
+                <div class="card-img" data-url="https://mon-ancien-site.example">🦩 Flamant néon</div>
+                <h3>Phoenicopterus neon</h3>
+                <p>Reflets holographiques, danse synchronisée.</p>
+                <button class="btn species-btn" data-url="https://mon-ancien-site.example">En savoir plus</button>
+            </div>
+            <div class="species-card">
+                <div class="card-img" data-url="https://mon-ancien-site.example">🐧 Manchot quantique</div>
+                <h3>Aptenodytes quantum</h3>
+                <p>Intrication polaire, ailes supraconductrices.</p>
+                <button class="btn species-btn" data-url="https://mon-ancien-site.example">En savoir plus</button>
+            </div>
+            <div class="species-card">
+                <div class="card-img" data-url="https://mon-ancien-site.example">🦉 Hibou lunaire</div>
+                <h3>Strix lunaris</h3>
+                <p>Vision nocturne amplifiée, écholocation laser.</p>
+                <button class="btn species-btn" data-url="https://mon-ancien-site.example">En savoir plus</button>
+            </div>
+            <div class="species-card">
+                <div class="card-img" data-url="https://mon-ancien-site.example">🐦‍⬛ Corbeau fractal</div>
+                <h3>Corvus fractalis</h3>
+                <p>Intelligence collective, motifs infinis.</p>
+                <button class="btn species-btn" data-url="https://mon-ancien-site.example">En savoir plus</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION GALERIE : 12 IMAGES cliquables -->
+    <section id="galerie">
+        <h2>📸 Galerie Immersive</h2>
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- generation JS pour 12 éléments avec effet clic -->
+        </div>
+    </section>
+
+    <!-- SECTION BLOG : 4 articles -->
+    <section id="blog">
+        <h2>📰 Actualités Ornitho-Futur</h2>
+        <div class="blog-grid" id="blogGrid"></div>
+    </section>
+
+    <!-- SECTION CONTACT -->
+    <section id="contact">
+        <h2>💌 Contact & observations</h2>
+        <div class="contact-form">
+            <form id="contactForm">
+                <input type="text" id="name" placeholder="Votre nom" required>
+                <input type="email" id="email" placeholder="Email futuriste" required>
+                <textarea id="message" rows="4" placeholder="Votre message ou observation d'oiseau..."></textarea>
+                <button type="submit" class="btn" id="sendMsgBtn">Envoyer vers l'éther 🕊️</button>
+                <div id="formFeedback" style="margin-top: 1rem; font-weight: 500;"></div>
+            </form>
+        </div>
+    </section>
 </div>
+
+<footer>
+    <p>Site créé par un passionné d’oiseaux. ✨ futur & nature unissent leurs ailes.</p>
+    <p>🪶 Mentions légales | Politique de confidentialité</p>
+</footer>
+
+<button class="darkmode-toggle" id="darkmodeToggle">🌓 Mode Clair/Sombre</button>
+<div class="bird-counter" id="birdCounter">🐦 Oiseaux vus : 0</div>
 
 <script>
     (function() {
-        // ---------- CANVAS : OISEAUX VOLANTS / MARCHEURS + FEUILLES SUR LES CÔTÉS ----------
-        const canvas = document.getElementById('natureCanvas');
+        // --------------------------- PARTICULES LUMINEUSES (JS) ---------------------------
+        const canvas = document.getElementById('particlesCanvas');
         const ctx = canvas.getContext('2d');
         let width, height;
-        
-        // ---------- FEUILLES (effet dégradé mouvant sur les bords) ----------
-        let leaves = [];
-        const LEAF_COUNT = 48;
-        
-        class Leaf {
-            constructor(x, y, size, angle, vx, vy, sway, side) {
-                this.x = x; this.y = y; this.size = size; this.angle = angle;
-                this.vx = vx; this.vy = vy; this.sway = sway; this.side = side;
-                this.rotSpeed = (Math.random() - 0.5) * 0.025;
-                this.opacity = 0.5 + Math.random() * 0.4;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.angle += this.rotSpeed;
-                // Rester sur les côtés mais dérive naturelle
-                if (this.side === 'left') {
-                    if (this.x > width * 0.28) this.x = -15;
-                    if (this.x < -50) this.x = width * 0.2;
-                    if (this.y > height + 70) this.y = -40;
-                    if (this.y < -60) this.y = height + 50;
-                } else {
-                    if (this.x < width * 0.72) this.x = width + 20;
-                    if (this.x > width + 60) this.x = width * 0.78;
-                    if (this.y > height + 70) this.y = -40;
-                    if (this.y < -60) this.y = height + 50;
-                }
-                // oscillation douce
-                this.x += Math.sin(Date.now() * 0.0025 + this.sway) * 0.2;
-            }
-            draw(ctx) {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle);
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.quadraticCurveTo(this.size * 0.6, -this.size * 0.45, this.size, 0);
-                ctx.quadraticCurveTo(this.size * 0.6, this.size * 0.45, 0, 0);
-                ctx.fillStyle = `rgba(90, 150, 80, ${this.opacity * 0.75})`;
-                ctx.shadowBlur = 8;
-                ctx.shadowColor = "rgba(70, 210, 130, 0.5)";
-                ctx.fill();
-                ctx.beginPath();
-                ctx.moveTo(this.size * 0.3, -this.size * 0.2);
-                ctx.lineTo(this.size * 0.7, 0);
-                ctx.lineTo(this.size * 0.3, this.size * 0.2);
-                ctx.fillStyle = `rgba(140, 210, 100, 0.6)`;
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-        
-        // ---------- OISEAUX : certains volent, d'autres se promènent et mangent en bas ----------
-        let birds = [];
-        const BIRD_COUNT = 34;
-        
-        class Bird {
-            constructor(x, y, vx, vy, size, wingPhase, isGroundFeeder = false) {
-                this.x = x; this.y = y; this.vx = vx; this.vy = vy;
-                this.size = size; this.wingPhase = wingPhase;
-                this.flapSpeed = 0.1 + Math.random() * 0.12;
-                this.isGroundFeeder = isGroundFeeder;
-                this.groundTimer = 0;
-                this.feeding = false;
-                if (isGroundFeeder) {
-                    this.y = height - 18 - Math.random() * 22;
-                    this.vy = 0;
-                    this.vx = (Math.random() - 0.5) * 1.1;
-                }
-            }
-            
-            update() {
-                if (this.isGroundFeeder) {
-                    // Oiseaux qui se promènent et picorent au sol
-                    this.x += this.vx;
-                    if (this.x < 35) this.vx = Math.abs(this.vx);
-                    if (this.x > width - 35) this.vx = -Math.abs(this.vx);
-                    if (!this.feeding && Math.random() < 0.018) {
-                        this.feeding = true;
-                        this.groundTimer = 28;
-                    }
-                    if (this.feeding) {
-                        this.groundTimer--;
-                        if (this.groundTimer <= 0) this.feeding = false;
-                    }
-                    this.y = height - 14 + Math.sin(Date.now() * 0.012) * 2;
-                    if (this.y > height - 5) this.y = height - 10;
-                } else {
-                    // Vol dynamique (peur / mouvement)
-                    this.x += this.vx;
-                    this.y += this.vy;
-                    if (this.x < -70) this.x = width + 50;
-                    if (this.x > width + 70) this.x = -50;
-                    if (this.y < -60) this.y = height + 50;
-                    if (this.y > height + 100) this.y = -40;
-                    if (Math.random() < 0.025) {
-                        this.vx += (Math.random() - 0.5) * 0.55;
-                        this.vy += (Math.random() - 0.5) * 0.45;
-                        let maxSpeed = 3.6;
-                        this.vx = Math.min(maxSpeed, Math.max(-maxSpeed, this.vx));
-                        this.vy = Math.min(maxSpeed, Math.max(-maxSpeed, this.vy));
-                    }
-                    this.wingPhase += this.flapSpeed;
-                }
-            }
-            
-            draw(ctx) {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                if (!this.isGroundFeeder) {
-                    let angle = Math.atan2(this.vy, this.vx);
-                    ctx.rotate(angle);
-                } else {
-                    if (this.vx > 0) ctx.rotate(0); else ctx.rotate(Math.PI);
-                }
-                const wing = Math.sin(this.wingPhase) * 0.65 + 0.45;
-                const wingOffset = wing * this.size * 0.55;
-                
-                const grad = ctx.createLinearGradient(-this.size, -this.size/2, this.size, this.size/2);
-                grad.addColorStop(0, 'rgba(28, 65, 85, 0.92)');
-                grad.addColorStop(1, 'rgba(0, 170, 190, 0.85)');
-                ctx.beginPath();
-                ctx.moveTo(this.size, 0);
-                ctx.lineTo(-this.size * 0.5, -this.size * 0.5 + wingOffset);
-                ctx.lineTo(-this.size * 0.2, 0);
-                ctx.lineTo(-this.size * 0.5, this.size * 0.5 - wingOffset);
-                ctx.fillStyle = grad;
-                ctx.shadowBlur = 12;
-                ctx.shadowColor = "rgba(0, 210, 200, 0.7)";
-                ctx.fill();
-                
-                // bec et détails pour les nourrisseurs
-                if (this.isGroundFeeder && this.feeding) {
-                    ctx.beginPath();
-                    ctx.moveTo(this.size * 0.9, 0);
-                    ctx.lineTo(this.size * 1.3, -3);
-                    ctx.lineTo(this.size * 1.3, 3);
-                    ctx.fillStyle = "#ffaa66";
-                    ctx.fill();
-                    ctx.beginPath();
-                    ctx.arc(this.size * 1.45, 3, 2.2, 0, Math.PI*2);
-                    ctx.fillStyle = "#e5bc7a";
-                    ctx.fill();
-                }
-                ctx.restore();
-            }
-        }
-        
-        // --- INITIALISATION FORÊTS + OISEAUX ---
-        function initCanvasWorld() {
-            leaves = [];
-            for (let i = 0; i < LEAF_COUNT; i++) {
-                let side = Math.random() < 0.5 ? 'left' : 'right';
-                let x, y;
-                if (side === 'left') x = Math.random() * (width * 0.28);
-                else x = width - Math.random() * (width * 0.28);
-                y = Math.random() * height;
-                let size = 7 + Math.random() * 18;
-                let angle = Math.random() * Math.PI * 2;
-                let vx = (side === 'left') ? 0.2 + Math.random() * 0.8 : -0.2 - Math.random() * 0.8;
-                let vy = (Math.random() - 0.5) * 0.6;
-                let sway = Math.random() * 100;
-                leaves.push(new Leaf(x, y, size, angle, vx, vy, sway, side));
-            }
-            birds = [];
-            for (let i = 0; i < BIRD_COUNT; i++) {
-                let isGround = (i < 10);  // 10 oiseaux se promènent / mangent en bas
-                if (isGround) {
-                    let x = Math.random() * width;
-                    let y = height - 16;
-                    let vx = (Math.random() - 0.5) * 1.4;
-                    let size = 9 + Math.random() * 9;
-                    birds.push(new Bird(x, y, vx, 0, size, Math.random() * Math.PI * 2, true));
-                } else {
-                    let x = Math.random() * width;
-                    let y = Math.random() * height * 0.7;
-                    let vx = (Math.random() - 0.5) * 2.4 + 0.7;
-                    let vy = (Math.random() - 0.5) * 1.8;
-                    let size = 7 + Math.random() * 13;
-                    birds.push(new Bird(x, y, vx, vy, size, Math.random() * Math.PI * 2, false));
-                }
-            }
-        }
-        
-        // Animation globale 
-        function drawScene() {
-            if (!ctx) return;
-            ctx.clearRect(0, 0, width, height);
-            // Voile très léger pour garder lisibilité du texte
-            ctx.fillStyle = "rgba(2, 7, 16, 0.2)";
-            ctx.fillRect(0, 0, width, height);
-            
-            // FEUILLES
-            for (let leaf of leaves) {
-                leaf.update();
-                leaf.draw(ctx);
-            }
-            // OISEAUX
-            for (let bird of birds) {
-                bird.update();
-                bird.draw(ctx);
-            }
-            
-            // Petites particules "miettes" pour les oiseaux au sol en train de picorer
-            for (let bird of birds) {
-                if (bird.isGroundFeeder && bird.feeding) {
-                    ctx.beginPath();
-                    ctx.arc(bird.x + 13, bird.y + 5, 2, 0, Math.PI * 2);
-                    ctx.fillStyle = "rgba(230, 180, 90, 0.9)";
-                    ctx.fill();
-                }
-            }
-            
-            // Ombres mouvantes néon futuriste (effet dégradé)
-            ctx.globalCompositeOperation = "lighter";
-            for (let i = 0; i < 18; i++) {
-                ctx.beginPath();
-                ctx.arc((Math.sin(Date.now() * 0.002 + i) * 15 + i * 33) % width, height - 8, 3, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(70, 220, 170, 0.2)`;
-                ctx.fill();
-            }
-            ctx.globalCompositeOperation = "source-over";
-            
-            requestAnimationFrame(drawScene);
-        }
-        
+        let particles = [];
+        const PARTICLE_COUNT = 110;
         function resizeCanvas() {
             width = window.innerWidth;
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
-            initCanvasWorld();
         }
-        
-        window.addEventListener('resize', () => { resizeCanvas(); });
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.radius = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.3 + 0.2;
+                this.color = `rgba(0, ${150 + Math.random() * 105}, 255, ${Math.random() * 0.6 + 0.2})`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = "#0ff";
+                ctx.fill();
+            }
+        }
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
+        }
+        function animateParticles() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, width, height);
+            for (let p of particles) {
+                p.update();
+                p.draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initParticles();
+        });
         resizeCanvas();
-        drawScene();
-        
-        // Bouton dynamique pour rappel de l'interaction
-        const btn = document.getElementById('dynamicBtn');
-        if (btn) {
-            btn.addEventListener('click', () => {
-                alert("✨ Volutes d'oiseaux & feuillage mouvant ✨\nDécouvrez les listes eBird, galerie, station d’écoute via les liens en haut de page.");
-            });
+        initParticles();
+        animateParticles();
+
+        // ---------- COMPTEUR OISEAUX VUS ----------
+        let birdCount = 0;
+        const counterDiv = document.getElementById('birdCounter');
+        function incrementBirdCounter() {
+            birdCount++;
+            counterDiv.innerHTML = `🐦 Oiseaux vus : ${birdCount}`;
         }
-        
-        // Animation subtile d'ombres sur les cartes (effet futuriste)
-        const cards = document.querySelectorAll('.card-mini');
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-7px) scale(1.02)';
-                card.style.transition = '0.2s';
-                card.style.boxShadow = '0 0 20px rgba(70,255,200,0.4)';
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0)';
-                card.style.boxShadow = 'none';
+        // Chaque clic sur image / bouton "espèces" peut incrémenter
+        // mais on incrémente aussi au clic sur les oiseaux du ciel? non, mais sur les éléments du site -> espèces/galerie.
+
+        // ---------- EFFET SONORE (simple Web Audio) ----------
+        function playBirdSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                oscillator.connect(gain);
+                gain.connect(audioCtx.destination);
+                oscillator.frequency.value = 1200;
+                gain.gain.value = 0.2;
+                oscillator.type = 'sine';
+                oscillator.start();
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.6);
+                oscillator.stop(audioCtx.currentTime + 0.6);
+            } catch(e) { console.log("audio not supported"); }
+        }
+
+        // ---------- REDIRECTION VERS ANCIEN SITE (toutes les images / boutons) ----------
+        const TARGET_URL = "https://mon-ancien-site.example"; // à remplacer par l'URL finale
+        function redirectToOldSite(event) {
+            event?.stopPropagation?.();
+            window.open(TARGET_URL, '_blank');
+            incrementBirdCounter();
+            playBirdSound();
+        }
+
+        // ----- Génération des 12 éléments galerie (cliquables) -----
+        const galleryContainer = document.getElementById('galleryGrid');
+        for (let i = 1; i <= 12; i++) {
+            const galleryDiv = document.createElement('div');
+            galleryDiv.className = 'gallery-item';
+            galleryDiv.innerHTML = `<i class="fas fa-feather-alt" style="font-size: 3rem; margin-right: 8px;"></i> 📷 Image ${i}<br><span style="font-size:0.7rem;">Oiseau futur ${i}</span>`;
+            galleryDiv.style.display = 'flex';
+            galleryDiv.style.flexDirection = 'column';
+            galleryDiv.addEventListener('click', redirectToOldSite);
+            galleryContainer.appendChild(galleryDiv);
+        }
+
+        // ----- 4 articles blog (avec image cliquable)-----
+        const blogContainer = document.getElementById('blogGrid');
+        const blogPosts = [
+            { title: "Migration 2.0 : traque satellite", date: "12 mars 2025", text: "Les oiseaux équipés de nano-drones, un nouveau paradigme..." },
+            { title: "Le chant des forêts augmentées", date: "28 avril 2025", text: "IA générative & bioacoustique : l'avenir de l'ornithologie." },
+            { title: "Rencontre avec le Cygne numérique", date: "05 mai 2025", text: "Une espèce symbole de l'ère post-humaine." },
+            { title: "Protocole Aile Libre 2077", date: "19 juin 2025", text: "Préserver la biodiversité grâce à la tech." }
+        ];
+        blogPosts.forEach(post => {
+            const card = document.createElement('div');
+            card.className = 'blog-card';
+            card.innerHTML = `
+                <div class="card-img-blog" style="background:#2f5e6e; border-radius:28px; height:140px; display:flex; align-items:center; justify-content:center; cursor:pointer; margin-bottom:12px;">
+                    📸 ${post.title.substring(0,12)}...
+                </div>
+                <h3>${post.title}</h3>
+                <small>${post.date}</small>
+                <p>${post.text}</p>
+            `;
+            const imgDiv = card.querySelector('.card-img-blog');
+            imgDiv.addEventListener('click', redirectToOldSite);
+            blogContainer.appendChild(card);
+        });
+
+        // Ajout des clics sur les images des cartes espèces + boutons
+        const allCardImgs = document.querySelectorAll('.card-img');
+        allCardImgs.forEach(img => {
+            img.addEventListener('click', redirectToOldSite);
+        });
+        const speciesBtns = document.querySelectorAll('.species-btn');
+        speciesBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                redirectToOldSite();
             });
         });
-        
-        // Légère parallaxe texte pour accompagnement
-        const bio = document.querySelector('.bio');
-        if(bio) {
-            setInterval(() => {
-                const intensity = (Math.sin(Date.now() / 1400) * 0.25 + 0.75);
-                bio.style.textShadow = `0 0 ${intensity * 8}px rgba(0, 210, 200, 0.5)`;
-            }, 180);
+
+        // Bouton découvrir espèces
+        const discoverBtn = document.getElementById('discoverBtn');
+        if(discoverBtn) discoverBtn.addEventListener('click', () => {
+            document.getElementById('especes').scrollIntoView({ behavior: 'smooth' });
+            incrementBirdCounter();
+            playBirdSound();
+        });
+
+        // ---------- FORMULAIRE (sans rechargement + message) ----------
+        const contactForm = document.getElementById('contactForm');
+        const feedbackDiv = document.getElementById('formFeedback');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            if(name) feedbackDiv.innerHTML = `✨ Merci ${name} pour ton message ! ✨`;
+            else feedbackDiv.innerHTML = `✨ Merci pour ton message ! ✨`;
+            feedbackDiv.style.color = '#0ff';
+            contactForm.reset();
+            setTimeout(() => { feedbackDiv.innerHTML = ''; }, 3000);
+            incrementBirdCounter();
+            playBirdSound();
+        });
+
+        // ---------- MODE SOMBRE (toggle) ----------
+        const darkToggle = document.getElementById('darkmodeToggle');
+        darkToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            // stockage local si souhaité
+            if(document.body.classList.contains('light-mode')) {
+                localStorage.setItem('theme', 'light');
+            } else {
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+        if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
+
+        // ---------- EFFET STICKY NAV TRANSPARENCE AU SCROLL ----------
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if(window.scrollY > 80) {
+                nav.style.background = "rgba(0, 8, 20, 0.95)";
+                nav.style.backdropFilter = "blur(20px)";
+            } else {
+                nav.style.background = "rgba(0, 20, 35, 0.85)";
+            }
+        });
+
+        // animation apparition sections au scroll (fade-in)
+        const sections = document.querySelectorAll('section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        sections.forEach(s => {
+            s.style.opacity = '0';
+            s.style.transform = 'translateY(25px)';
+            s.style.transition = '0.6s';
+            observer.observe(s);
+        });
+
+        // Bonus: ajout compteur sur tous les boutons images déjà cliquables
+        // Assure que chaque image de blog et de galerie incrémente + son.
+        const allClickableAreas = document.querySelectorAll('.gallery-item, .card-img, .blog-card .card-img-blog, .species-btn, .btn');
+        allClickableAreas.forEach(el => {
+            if(el && !el.hasAttribute('data-listener')) {
+                el.setAttribute('data-listener', 'true');
+                el.addEventListener('click', (e) => {
+                    if(!e.target.closest('.species-btn')) incrementBirdCounter();
+                });
+            }
+        });
+        // ajout son au clic sur les images galerie déjà redirigées
+        document.querySelectorAll('.gallery-item').forEach(g => {
+            g.addEventListener('click', () => { playBirdSound(); });
+        });
+        document.querySelectorAll('.card-img-blog').forEach(b => {
+            b.addEventListener('click', () => { playBirdSound(); });
+        });
+        // ajustement final pour que le compteur s'incrémente à chaque clic de redirection
+        function enhancedRedirect(e) {
+            redirectToOldSite(e);
         }
-        
+        const allRedirectTargets = document.querySelectorAll('.card-img, .gallery-item, .card-img-blog, .species-btn');
+        allRedirectTargets.forEach(t => t.addEventListener('click', enhancedRedirect));
     })();
 </script>
+<!-- Font awesome pour quelques icônes (optionnel) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </body>
 </html>
